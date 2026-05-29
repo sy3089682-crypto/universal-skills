@@ -1,0 +1,30 @@
+{
+  "name": "universal-skills",
+  "version": "1.0.0",
+  "description": "One install. Every AI coding tool. 60+ expert skills.",
+  "bin": {
+    "universal-skills": "./bin/universal-skills.js"
+  },
+  "keywords": [
+    "opencode", "claude-code", "cursor", "windsurf", "copilot",
+    "ai-skills", "coding-agent", "skills", "ai-coding"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sy3089682-crypto/universal-skills.git"
+  },
+  "homepage": "https://sy3089682-crypto.github.io/universal-skills",
+  "bugs": "https://github.com/sy3089682-crypto/universal-skills/issues",
+  "engines": { "node": ">=18" },
+  "preferGlobal": true,
+  "files": [
+    "bin/",
+    "skills/",
+    "plugins/",
+    "scripts/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ]
+}

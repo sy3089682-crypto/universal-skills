@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Skills — AI Coding Skills, One Install</title>
+<meta name="description" content="60+ expert skills for opencode, Claude Code, Cursor, Windsurf. One install, works everywhere.">
+<meta property="og:title" content="Universal Skills">
+<meta property="og:description" content="60+ expert AI coding skills. One install, works everywhere.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg-card: #111118;
+  --bg-hover: #1a1a28;
+  --border: #22223a;
+  --text: #e0e0f0;
+  --text-dim: #8888aa;
+  --accent: #7C3AED;
+  --accent-glow: #7C3AED66;
+  --green: #22c55e;
+  --font: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+.logo span { color: var(--accent); }
+.logo small { font-size: 0.7rem; color: var(--text-dim); font-weight: 400; }
+nav { display: flex; gap: 1.5rem; align-items: center; }
+nav a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: color .15s; }
+nav a:hover { color: var(--text); }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1.25rem; border-radius: 6px;
+  font-family: var(--font); font-size: 0.85rem; cursor: pointer;
+  border: 1px solid var(--border); text-decoration: none;
+  transition: all .15s;
+}
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { box-shadow: 0 0 20px var(--accent-glow); }
+.btn-outline { background: transparent; color: var(--text); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.container { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
+
+.hero {
+  text-align: center; padding: 5rem 2rem 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.hero h1 span { background: linear-gradient(135deg, #7C3AED, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 1rem auto 2rem; }
+.install-box {
+  display: inline-flex; align-items: center;
+  background: #000; border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.1rem;
+  max-width: 100%;
+}
+.install-box code { padding: 0.75rem 1.25rem; font-size: 0.9rem; white-space: nowrap; }
+.install-box button {
+  background: var(--accent); border: none; color: #fff;
+  padding: 0.75rem 1.25rem; cursor: pointer;
+  font-family: var(--font); font-size: 0.85rem;
+  border-radius: 0 7px 7px 0;
+  transition: background .15s;
+}
+.install-box button:hover { background: #6d28d9; }
+.install-box button.copied { background: var(--green); }
+.sub-install { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.75rem; }
+.sub-install code { background: var(--bg-card); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.75rem; }
+
+/* ─── Stats ─── */
+.stats {
+  display: flex; justify-content: center; gap: 3rem;
+  padding: 2rem; border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 0.8rem; color: var(--text-dim); }
+
+/* ─── Compatibility ─── */
+.compat {
+  padding: 3rem 0; border-bottom: 1px solid var(--border);
+}
+.compat h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+.compat-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+.compat-item {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.75rem 1rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.compat-item .icon { font-size: 1.25rem; }
+.compat-item .name { font-weight: 600; font-size: 0.85rem; }
+.compat-item .status { font-size: 0.75rem; color: var(--text-dim); }
+
+/* ─── Skill Browser ─── */
+.skills-browser {
+  padding: 3rem 0; border-bottom: 1px solid var(--border);
+}
+.skills-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.skills-header h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+.search-box {
+  background: #000; border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.5rem 1rem;
+  font-family: var(--font); font-size: 0.85rem; color: var(--text);
+  width: 260px; outline: none; transition: border-color .15s;
+}
+.search-box:focus { border-color: var(--accent); }
+.categories { display: flex; flex-direction: column; gap: 1.5rem; }
+.category {}
+.cat-name {
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); margin-bottom: 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.cat-count { color: var(--text-dim); font-size: 0.7rem; }
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.5rem;
+}
+.skill-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.75rem 1rem;
+  cursor: pointer; transition: all .15s;
+}
+.skill-card:hover { border-color: var(--accent); background: var(--bg-hover); }
+.skill-card.hidden { display: none; }
+.skill-name { font-weight: 600; font-size: 0.85rem; }
+.skill-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; line-height: 1.4; }
+.skill-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.4rem; }
+.skill-tag {
+  font-size: 0.6rem; padding: 0.15rem 0.4rem;
+  background: rgba(124, 58, 237, 0.15); color: var(--accent);
+  border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+footer {
+  text-align: center; padding: 2rem;
+  color: var(--text-dim); font-size: 0.8rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span>Universal</span> Skills
+    <small>v1.0.0</small>
+  </div>
+  <nav>
+    <a href="https://github.com/sy3089682-crypto/universal-skills">GitHub</a>
+    <a href="https://github.com/sy3089682-crypto/universal-skills/blob/main/CONTRIBUTING.md">Contribute</a>
+    <a href="https://www.npmjs.com/package/universal-skills" class="btn btn-outline">npm</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Give Your AI<br><span>60+ Expert Skills</span></h1>
+  <p>
+    One install. Every AI coding tool. Your AI stops guessing and starts building
+    with production-grade domain expertise built in.
+  </p>
+  <div class="install-box">
+    <code>$ npx universal-skills install</code>
+    <button id="copyBtn" onclick="copyInstall()">Copy</button>
+  </div>
+  <div class="sub-install">
+    Works with &nbsp;<code>opencode</code> · <code>claude</code> · <code>cursor</code> · <code>windsurf</code>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Expert Skills</div></div>
+  <div class="stat"><div class="stat-num">14</div><div class="stat-label">Categories</div></div>
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">CLI Tools</div></div>
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">Dependencies</div></div>
+</section>
+
+<div class="container">
+
+<section class="compat">
+  <h2>Compatibility</h2>
+  <div class="compat-grid">
+    <div class="compat-item"><span class="icon">🔷</span><div><div class="name">opencode</div><div class="status">Plugin + directory</div></div></div>
+    <div class="compat-item"><span class="icon">🟢</span><div><div class="name">Claude Code</div><div class="status">~/.claude/skills/</div></div></div>
+    <div class="compat-item"><span class="icon">🟣</span><div><div class="name">Cursor</div><div class="status">~/.cursor/skills/</div></div></div>
+    <div class="compat-item"><span class="icon">🔵</span><div><div class="name">Windsurf</div><div class="status">~/.windsurf/skills/</div></div></div>
+    <div class="compat-item"><span class="icon">🟠</span><div><div class="name">GitHub Copilot</div><div class="status">Coming soon</div></div></div>
+  </div>
+</section>
+
+<section class="skills-browser">
+  <div class="skills-header">
+    <h2>Skill Library</h2>
+    <input class="search-box" id="skillSearch" type="text" placeholder="Search skills..." oninput="filterSkills()">
+  </div>
+  <div class="categories" id="skillList"></div>
+</section>
+
+</div>
+
+<footer>
+  <p>
+    MIT · <a href="https://github.com/sy3089682-crypto/universal-skills">GitHub</a> ·
+    <a href="https://github.com/sy3089682-crypto/universal-skills/blob/main/CONTRIBUTING.md">Contribute</a> ·
+    <a href="https://github.com/sy3089682-crypto/universal-skills/issues">Issues</a>
+  </p>
+</footer>
+
+<script>
+const SKILLS = {
+  "AI / ML": [
+    { name: "prompt-engineering", desc: "Crafting LLM prompts — system prompts, few-shot, chain-of-thought, structured output", tags: ["llm", "prompt"] },
+    { name: "rag-implementation", desc: "Retrieval-Augmented Generation — chunking, embedding, vector search, hybrid search", tags: ["rag", "search", "llm"] },
+    { name: "llm-evaluation", desc: "Evaluating LLM output — benchmarks, human eval, automated metrics, hallucination detection", tags: ["llm", "eval"] },
+    { name: "agent-tool-use", desc: "Building AI agents with tool calling — function definitions, error recovery, multi-step reasoning", tags: ["agents", "tools"] },
+    { name: "fine-tuning", desc: "Fine-tuning LLMs — LoRA, dataset prep, hyperparameter selection, evaluation", tags: ["llm", "training", "lora"] },
+    { name: "vector-databases", desc: "Vector search — HNSW/IVF indexing, hybrid search, metadata filtering, performance tuning", tags: ["vector", "search", "database"] },
+  ],
+  "Languages": [
+    { name: "python-best-practices", desc: "Production Python — typing, async, dependency management, pytest, packaging", tags: ["python", "backend"] },
+    { name: "typescript-advanced", desc: "Advanced TypeScript — conditional types, mapped types, branded types, discriminated unions", tags: ["typescript", "frontend", "backend"] },
+    { name: "rust-systems", desc: "Systems Rust — ownership, borrowing, lifetimes, Send/Sync, unsafe, FFI", tags: ["rust", "systems"] },
+    { name: "go-patterns", desc: "Go application patterns — interfaces, goroutines, channels, table-driven tests, middleware", tags: ["go", "backend"] },
+  ],
+  "Backend": [
+    { name: "api-design-rest-graphql", desc: "REST and GraphQL API design — resource modeling, versioning, pagination", tags: ["api", "rest", "graphql"] },
+    { name: "authentication-authorization", desc: "Auth — JWT, OAuth 2.0, RBAC, password hashing, MFA, token refresh", tags: ["auth", "security"] },
+    { name: "caching-strategies", desc: "Caching — Redis, CDN, HTTP cache, invalidation, stampede prevention, write-through", tags: ["cache", "redis", "performance"] },
+    { name: "message-queue-patterns", desc: "Message-driven systems — Kafka, RabbitMQ, SQS, event sourcing, CQRS, DLQ", tags: ["queue", "kafka", "events"] },
+    { name: "rate-limiting", desc: "API rate limiting — token bucket, sliding window, Redis-backed, distributed", tags: ["rate-limit", "security", "performance"] },
+    { name: "websocket-realtime", desc: "WebSocket — connection management, heartbeat, reconnection, pub/sub, backpressure", tags: ["websocket", "realtime"] },
+  ],
+  "DevOps": [
+    { name: "docker-multi-stage", desc: "Dockerfiles — multi-stage builds, layer caching, distroless, security scanning", tags: ["docker", "containers"] },
+    { name: "ci-cd-pipeline", desc: "CI/CD — GitHub Actions, build caching, test parallelization, deployment gates", tags: ["ci-cd", "github-actions"] },
+    { name: "kubernetes-deployment", desc: "K8s — Deployments, Services, Ingress, HPA, probes, PDB, RBAC", tags: ["kubernetes", "k8s"] },
+    { name: "observability-monitoring", desc: "Observability — structured logs, Prometheus metrics, OpenTelemetry tracing, SLOs", tags: ["observability", "monitoring"] },
+    { name: "infrastructure-as-code", desc: "IaC — Terraform, state management, modules, secrets, policy as code", tags: ["terraform", "iac", "infrastructure"] },
+    { name: "github-actions-advanced", desc: "Advanced GitHub Actions — composite actions, matrix, reusable workflows, OIDC", tags: ["github-actions", "ci-cd"] },
+    { name: "cost-optimization", desc: "Cloud cost — right-sizing, spot instances, storage tiering, FinOps", tags: ["cost", "cloud", "finops"] },
+  ],
+  "Frontend": [
+    { name: "react-nextjs-patterns", desc: "React & Next.js — RSC, data fetching, streaming, Suspense, ISR", tags: ["react", "nextjs"] },
+    { name: "accessibility-wcag", desc: "WCAG 2.1 AA — ARIA, keyboard nav, screen readers, color contrast, focus", tags: ["a11y", "accessibility"] },
+    { name: "css-animation-performance", desc: "CSS animations — GPU-accelerated, FLIP, will-change, reduced-motion", tags: ["css", "animation"] },
+    { name: "responsive-mobile-ux", desc: "Mobile UX — mobile-first, touch targets, safe areas, keyboard avoidance", tags: ["mobile", "responsive"] },
+    { name: "design-system-tokens", desc: "Design systems — tokens, CSS custom props, theming, dark mode, documentation", tags: ["design-system", "tokens"] },
+    { name: "seo-optimization", desc: "SEO — meta tags, JSON-LD, Core Web Vitals, sitemaps, canonical URLs", tags: ["seo", "performance"] },
+    { name: "pwa-offline", desc: "PWA — service workers, cache strategies, manifest, offline fallback, push", tags: ["pwa", "offline", "service-worker"] },
+  ],
+  "Security": [
+    { name: "owasp-top-ten", desc: "OWASP Top 10 — broken access control, injection, XSS, SSRF, deserialization", tags: ["security", "owasp"] },
+    { name: "secrets-management", desc: "Secrets — vaults, env vars, rotation, secret detection, least privilege", tags: ["security", "secrets"] },
+    { name: "dependency-vulnerability-scanning", desc: "Dependency scanning — SCA, Dependabot, CVE remediation, SBOM", tags: ["security", "dependencies"] },
+    { name: "secure-api-design", desc: "Secure APIs — rate limiting, input validation, CORS, CSRF, webhook verification", tags: ["api", "security"] },
+    { name: "penetration-testing", desc: "Pentesting — recon, scanning, exploitation, privilege escalation, reporting", tags: ["security", "pentest"] },
+  ],
+  "Testing": [
+    { name: "e2e-testing-playwright", desc: "Playwright E2E — Page Object Model, fixtures, visual regression, CI", tags: ["testing", "e2e", "playwright"] },
+    { name: "unit-testing-patterns", desc: "Unit testing — AAA, mocking, edge cases, naming conventions, coverage", tags: ["testing", "unit"] },
+    { name: "integration-testing", desc: "Integration testing — Testcontainers, API contract tests, fixtures", tags: ["testing", "integration"] },
+    { name: "property-based-testing", desc: "Property-based testing — invariants, generators, shrinking, FastCheck", tags: ["testing", "properties"] },
+    { name: "test-coverage-strategies", desc: "Coverage strategy — risk-based, mutation testing, thresholds, pyramid", tags: ["testing", "coverage"] },
+    { name: "ai-assisted-testing", desc: "AI testing — test generation, property discovery, fuzzing, regression detection", tags: ["testing", "ai"] },
+  ],
+  "Architecture": [
+    { name: "microservices-patterns", desc: "Microservices — boundaries, circuit breakers, saga, strangler fig", tags: ["architecture", "microservices"] },
+    { name: "domain-driven-design", desc: "DDD — bounded contexts, aggregates, entities, value objects, domain events", tags: ["architecture", "ddd"] },
+    { name: "clean-architecture", desc: "Clean architecture — dependency rule, use cases, layers, DI", tags: ["architecture", "clean"] },
+    { name: "event-driven-architecture", desc: "Event-driven — event sourcing, CQRS, pub/sub, idempotent consumers", tags: ["architecture", "events"] },
+    { name: "migration-strategies", desc: "Migrations — expand-migrate-contract, strangler, blue-green, rollback", tags: ["architecture", "migration"] },
+  ],
+  "Payment": [
+    { name: "stripe-integration", desc: "Stripe — Checkout, PaymentIntents, webhooks, idempotency, subscriptions", tags: ["payment", "stripe"] },
+    { name: "subscription-management", desc: "Subscriptions — pricing, proration, dunning, churn prevention", tags: ["payment", "subscriptions"] },
+    { name: "payment-webhook-reliability", desc: "Webhook reliability — signature verification, dedup, reconciliation", tags: ["payment", "webhooks"] },
+  ],
+  "Performance": [
+    { name: "web-vitals-optimization", desc: "Web Vitals — LCP, CLS, INP, image optimization, font loading", tags: ["performance", "web-vitals"] },
+    { name: "bundle-size-optimization", desc: "JS bundles — code splitting, tree shaking, dynamic imports, bundle analysis", tags: ["performance", "bundles"] },
+    { name: "database-query-optimization", desc: "DB queries — EXPLAIN ANALYZE, indexes, N+1 detection, read replicas", tags: ["performance", "database"] },
+    { name: "memory-leak-detection", desc: "Memory leaks — heap snapshots, DevTools, closures, event listeners", tags: ["performance", "memory"] },
+  ],
+  "Data": [
+    { name: "database-schema-optimization", desc: "DB schema — normalization, indexing strategy, migration patterns, connection pooling", tags: ["database", "schema"] },
+    { name: "etl-pipeline-design", desc: "ETL — batch/streaming, incremental loads, schema evolution, data quality", tags: ["data", "etl", "pipeline"] },
+  ],
+  "Mobile": [
+    { name: "react-native-patterns", desc: "React Native — navigation, FlashList, image optimization, Hermes", tags: ["mobile", "react-native"] },
+    { name: "ios-swift-patterns", desc: "iOS Swift — MVVM, async/await, SwiftUI, Core Data, DI", tags: ["mobile", "ios", "swift"] },
+  ],
+  "Compliance": [
+    { name: "gdpr-data-protection", desc: "GDPR — consent, data minimization, right to erasure, portability, DPA", tags: ["compliance", "gdpr"] },
+    { name: "soc2-audit-readiness", desc: "SOC 2 — controls, access reviews, incident response, evidence collection", tags: ["compliance", "soc2"] },
+  ],
+};
+
+function renderSkills() {
+  const container = document.getElementById("skillList");
+  container.innerHTML = "";
+  let total = 0;
+  for (const [cat, skills] of Object.entries(SKILLS)) {
+    total += skills.length;
+    const catDiv = document.createElement("div");
+    catDiv.className = "category";
+    catDiv.innerHTML = `<div class="cat-name">${cat} <span class="cat-count">(${skills.length})</span></div>
+      <div class="skills-grid">${skills.map(s =>
+        `<div class="skill-card" data-name="${s.name}" data-desc="${s.desc}" data-tags="${s.tags.join(" ")}">
+          <div class="skill-name">${s.name}</div>
+          <div class="skill-desc">${s.desc}</div>
+          <div class="skill-tags">${s.tags.map(t => `<span class="skill-tag">${t}</span>`).join("")}</div>
+        </div>`
+      ).join("")}</div>`;
+    container.appendChild(catDiv);
+  }
+}
+renderSkills();
+
+function filterSkills() {
+  const q = document.getElementById("skillSearch").value.toLowerCase().trim();
+  document.querySelectorAll(".skill-card").forEach(card => {
+    const text = (card.dataset.name + " " + card.dataset.desc + " " + card.dataset.tags).toLowerCase();
+    card.classList.toggle("hidden", q && !text.includes(q));
+  });
+  document.querySelectorAll(".category").forEach(cat => {
+    const visible = [...cat.querySelectorAll(".skill-card")].some(c => !c.classList.contains("hidden"));
+    cat.style.display = visible ? "" : "none";
+  });
+}
+
+function copyInstall() {
+  navigator.clipboard.writeText("npx universal-skills install").then(() => {
+    const btn = document.getElementById("copyBtn");
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

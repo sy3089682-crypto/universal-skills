@@ -1,0 +1,96 @@
+name: Validate Skills
+on:
+  pull_request:
+    paths:
+      - "skills/**/SKILL.md"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate skill descriptions
+        run: |
+          echo "::group::Checking description length"
+          errors=0
+          while IFS= read -r file; do
+            desc=$(grep -m1 '^description: ' "$file" | sed 's/^description: *//' || echo "")
+            len=${#desc}
+            name=$(basename "$(dirname "$file")")
+            if [ "$len" -lt 50 ]; then
+              echo "::error file=$file::Skill '$name' description is $len chars (min 50)"
+              ((errors++))
+            else
+              echo "  ✓ $name ($len chars)"
+            fi
+          done < <(find skills -name "SKILL.md" -type f)
+          echo "::endgroup::"
+          [ "$errors" -eq 0 ] || exit 1
+
+      - name: Validate YAML frontmatter
+        run: |
+          echo "::group::Checking YAML frontmatter"
+          errors=0
+          while IFS= read -r file; do
+            name=$(basename "$(dirname "$file")")
+            if ! head -1 "$file" | grep -q '^---$'; then
+              echo "::error file=$file::Missing opening ---"
+              ((errors++))
+            fi
+            fields=("name:" "description:" "tags:")
+            for field in "${fields[@]}"; do
+              if ! grep -q "^$field" "$file"; then
+                echo "::error file=$file::Missing '$field' in frontmatter"
+                ((errors++))
+              fi
+            done
+            # Check name matches directory
+            dirname=$(basename "$(dirname "$file")")
+            yaml_name=$(grep -m1 '^name: ' "$file" | sed 's/^name: *//' || echo "")
+            if [ "$dirname" != "$yaml_name" ]; then
+              echo "::error file=$file::Directory name '$dirname' != frontmatter name '$yaml_name'"
+              ((errors++))
+            fi
+            echo "  ✓ $name"
+          done < <(find skills -name "SKILL.md" -type f)
+          echo "::endgroup::"
+          [ "$errors" -eq 0 ] || exit 1
+
+      - name: Validate required sections
+        run: |
+          echo "::group::Checking required sections"
+          errors=0
+          while IFS= read -r file; do
+            name=$(basename "$(dirname "$file")")
+            for section in "## Domain Expertise" "## Checklist" "## Common Pitfalls"; do
+              if ! grep -q "$section" "$file"; then
+                echo "::error file=$file::Missing section '$section'"
+                ((errors++))
+              fi
+            done
+          done < <(find skills -name "SKILL.md" -type f)
+          echo "::endgroup::"
+          [ "$errors" -eq 0 ] || exit 1
+
+      - name: Check for empty skill files
+        run: |
+          echo "::group::Checking for empty files"
+          errors=0
+          while IFS= read -r file; do
+            lines=$(wc -l < "$file")
+            if [ "$lines" -lt 10 ]; then
+              echo "::error file=$file::Only $lines lines (min 10)"
+              ((errors++))
+            fi
+          done < <(find skills -name "SKILL.md" -type f)
+          echo "::endgroup::"
+          [ "$errors" -eq 0 ] || exit 1
+
+      - name: Summary
+        run: |
+          count=$(find skills -name "SKILL.md" -type f | wc -l)
+          echo "✅ $count skills validated"

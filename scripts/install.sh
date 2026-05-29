@@ -1,97 +1,157 @@
 #!/usr/bin/env bash
+# Universal Skills Installer — POSIX-compliant, macOS/Linux/Windows(WSL)
 set -euo pipefail
 
-REPO_RAW="https://raw.githubusercontent.com/universal-skills/universal-skills/main"
-REPO_URL="https://github.com/universal-skills/universal-skills.git"
-SKILLS_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
+VERSION="1.0.0"
+REPO_URL="https://github.com/sy3089682-crypto/universal-skills"
+REPO_RAW="https://raw.githubusercontent.com/sy3089682-crypto/universal-skills/main"
+
+# ─── Colors ──────────────────────────────────────────────
+R="\033[31m"; G="\033[32m"; Y="\033[33m"; B="\033[34m"
+M="\033[35m"; C="\033[36m"; N="\033[0m"; K="\033[1m"
+
+# ─── Helpers ─────────────────────────────────────────────
+log()  { printf "$1$2${N}\n"; }
+step() { printf "  ${C}→${N} $1 ..."; }
+ok()   { printf " ${G}OK${N}\n"; }
+fail() { printf " ${R}FAILED${N}\n"; echo "$1"; exit 1; }
+title(){ printf "\n${M}╔══════════════════════════════════════╗${N}\n"; }
+title2(){ printf "${M}║   Universal Skills v%-24s║${N}\n" "$VERSION"; }
+title3(){ printf "${M}╚══════════════════════════════════════╝${N}\n\n"; }
+
+detect_os() {
+  case "$(uname -s)" in
+    Darwin*) echo "macos" ;;
+    Linux*)  echo "linux" ;;
+    CYGWIN*|MINGW*|MSYS*) echo "windows" ;;
+    *)       echo "unknown" ;;
+  esac
+}
+
+detect_shell_config() {
+  case "${SHELL:-}" in
+    *zsh) echo "$HOME/.zshrc" ;;
+    *bash) [ "$detect_os" = "macos" ] && echo "$HOME/.bash_profile" || echo "$HOME/.bashrc" ;;
+    *fish) echo "$HOME/.config/fish/config.fish" ;;
+    *) echo "$HOME/.profile" ;;
+  esac
+}
+
+copy_skills() {
+  local src="$1" dst="$2"
+  mkdir -p "$dst"
+  local count=0
+  for cat_dir in "$src"/*/; do
+    [ -d "$cat_dir" ] || continue
+    local cat_name="$(basename "$cat_dir")"
+    for skill_dir in "$cat_dir"*/; do
+      [ -d "$skill_dir" ] || continue
+      [ -f "$skill_dir/SKILL.md" ] || continue
+      mkdir -p "$dst/$cat_name/$(basename "$skill_dir")"
+      cp "$skill_dir/SKILL.md" "$dst/$cat_name/$(basename "$skill_dir")/"
+      count=$((count + 1))
+    done
+  done
+  echo "$count"
+}
+
+spinner() {
+  local pid=$1 label="$2"
+  local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+  local i=0
+  while kill -0 "$pid" 2>/dev/null; do
+    printf "\r  ${C}%s${N} %s ..." "${spin:$i:1}" "$label"
+    i=$(( (i+1) % ${#spin} ))
+    sleep 0.1
+  done
+  printf "\r  ${G}✓${N} %s ... done\n" "$label"
+}
+
+# ─── Main ────────────────────────────────────────────────
+OS=$(detect_os)
 MODE="${1:-auto}"
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SKILLS_SRC="$SCRIPT_DIR/skills"
 
-red()   { echo -e "\033[31m$1\033[0m"; }
-green() { echo -e "\033[32m$1\033[0m"; }
-blue()  { echo -e "\033[34m$1\033[0m"; }
-bold()  { echo -e "\033[1m$1\033[0m"; }
-
-echo ""
-bold "╔══════════════════════════════════════════════╗"
-bold "║   Universal Skills — Cross-CLI Skill System  ║"
-bold "╚══════════════════════════════════════════════╝"
-echo ""
-
-detect_clis() {
-  local clis=()
-  if command -v opencode &>/dev/null; then clis+=("opencode"); fi
-  if command -v claude &>/dev/null; then clis+=("claude-code"); fi
-  if [ -d "$HOME/.opencode" ]; then clis+=("opencode"); fi
-  if [ -d "$HOME/.claude" ]; then clis+=("claude-code"); fi
-  echo "${clis[@]}"
-}
-
-install_for_opencode() {
-  local target="$HOME/.config/opencode/skills"
-  mkdir -p "$target"
-  echo "  → Installing to opencode: $target"
-  cp -r "$SKILLS_DIR/skills/"* "$target/"
-  cp -r "$SKILLS_DIR/plugins/opencode/"* "$HOME/.opencode/plugins/" 2>/dev/null || true
-  green "  ✓ opencode skills installed"
-}
-
-install_for_claude_code() {
-  local target="$HOME/.claude/skills"
-  mkdir -p "$target"
-  echo "  → Installing to Claude Code: $target"
-  cp -r "$SKILLS_DIR/skills/"* "$target/"
-  green "  ✓ Claude Code skills installed"
-}
-
-install_for_agents() {
-  local target="$HOME/.agents/skills"
-  mkdir -p "$target"
-  echo "  → Installing to .agents: $target"
-  cp -r "$SKILLS_DIR/skills/"* "$target/"
-  green "  ✓ .agents skills installed"
-}
+title; title2; title3
 
 case "$MODE" in
-  auto)
-    blue "Detecting installed CLI tools..."
-    CLIS=($(detect_clis))
-    if [ ${#CLIS[@]} -eq 0 ]; then
-      yellow "No supported CLI detected. Installing to all known locations."
-      install_for_opencode
-      install_for_claude_code
-      install_for_agents
-    else
-      for cli in "${CLIS[@]}"; do
-        case "$cli" in
-          opencode) install_for_opencode ;;
-          claude-code) install_for_claude_code ;;
-        esac
-      done
-    fi
-    ;;
-  opencode)
-    install_for_opencode
-    ;;
-  claude)
-    install_for_claude_code
-    ;;
-  all)
-    install_for_opencode
-    install_for_claude_code
-    install_for_agents
-    ;;
-  *)
-    echo "Usage: $0 [auto|opencode|claude|all]"
-    exit 1
-    ;;
+  auto|all|opencode|claude-code|cursor|windsurf) ;;
+  *) log "$Y" "Usage: $0 [auto|all|opencode|claude-code|cursor|windsurf]"
+     exit 1 ;;
 esac
 
+if [ "$OS" = "windows" ]; then
+  log "$Y" "Windows detected. Consider using PowerShell:"
+  log "$Y" "  powershell -ExecutionPolicy Bypass -File scripts/install.ps1"
+  echo ""
+fi
+
+# Gather targets
+declare -a TARGETS=()
+if [ "$MODE" = "auto" ]; then
+  [ -d "$HOME/.config/opencode" ] && TARGETS+=("opencode")
+  [ -d "$HOME/.claude" ] && TARGETS+=("claude-code")
+  [ -d "$HOME/.cursor" ] && TARGETS+=("cursor")
+  [ -d "$HOME/.windsurf" ] && TARGETS+=("windsurf")
+  [ "${#TARGETS[@]}" -eq 0 ] && TARGETS=("opencode" "claude-code")
+elif [ "$MODE" = "all" ]; then
+  TARGETS=("opencode" "claude-code" "cursor" "windsurf")
+else
+  TARGETS=("$MODE")
+fi
+
+log "$K" "  Detected OS: $OS"
+log "$K" "  Installing for: ${TARGETS[*]}\n"
+
+total=0
+for target in "${TARGETS[@]}"; do
+  case "$target" in
+    opencode)
+      DEST="$HOME/.config/opencode/skills"
+      PLUGIN_DEST="$HOME/.opencode/plugins"
+      step "opencode"
+      count=$(copy_skills "$SKILLS_SRC" "$DEST")
+      mkdir -p "$PLUGIN_DEST"
+      [ -f "$SCRIPT_DIR/plugins/opencode/skill-router.ts" ] && \
+        cp "$SCRIPT_DIR/plugins/opencode/skill-router.ts" "$PLUGIN_DEST/"
+      ok
+      log "  ${K}${G}  ✓${N} ${K}$count${N} skills → ${K}$DEST${N}"
+      log "  ${K}${G}  ✓${N} plugin → ${K}$PLUGIN_DEST${N}"
+      total=$((total + count))
+      ;;
+    claude-code)
+      DEST="$HOME/.claude/skills"
+      step "Claude Code"
+      count=$(copy_skills "$SKILLS_SRC" "$DEST")
+      ok
+      log "  ${K}${G}  ✓${N} ${K}$count${N} skills → ${K}$DEST${N}"
+      total=$((total + count))
+      ;;
+    cursor)
+      DEST="$HOME/.cursor/skills"
+      step "Cursor"
+      count=$(copy_skills "$SKILLS_SRC" "$DEST")
+      ok
+      log "  ${K}${G}  ✓${N} ${K}$count${N} skills → ${K}$DEST${N}"
+      total=$((total + count))
+      ;;
+    windsurf)
+      DEST="$HOME/.windsurf/skills"
+      step "Windsurf"
+      count=$(copy_skills "$SKILLS_SRC" "$DEST")
+      ok
+      log "  ${K}${G}  ✓${N} ${K}$count${N} skills → ${K}$DEST${N}"
+      total=$((total + count))
+      ;;
+  esac
+done
+
 echo ""
-bold "Installation complete!"
-echo "Restart your CLI tool for skills to take effect."
+log "$G" "  ──────────────────────────────────────"
+log "$K" "  ${K}${G}✓${N} ${K}$total${N} skills deployed across ${#TARGETS[@]} tool(s)"
+log "$G" "  ──────────────────────────────────────"
 echo ""
-echo "Next steps:"
-echo "  - Run 'opencode run' or 'claude' and ask a domain-specific question"
-echo "  - Skills will auto-load based on your task"
-echo "  - Or run: /list-skills (opencode) to see all installed skills"
+log "$C" "  ${K}➜${N} Restart your CLI tool — skills load automatically"
+log "$C" "  ${K}➜${N} Run ${K}npx universal-skills list${N} to browse"
 echo ""
