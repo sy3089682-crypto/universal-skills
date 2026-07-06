@@ -1,0 +1,80 @@
+name: Verify npm package artifact
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'bin/**'
+      - 'skills/**'
+      - 'plugins/**'
+      - 'scripts/**'
+      - 'templates/**'
+      - '.github/workflows/package-artifact-verification.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'bin/**'
+      - 'skills/**'
+      - 'plugins/**'
+      - 'scripts/**'
+      - 'templates/**'
+      - '.github/workflows/package-artifact-verification.yml'
+
+jobs:
+  verify-package-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create npm package tarball metadata
+        run: npm pack --json > pack-output.json
+
+      - name: Verify packaged runtime surface
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const pack = JSON.parse(fs.readFileSync('pack-output.json', 'utf8'));
+          if (!Array.isArray(pack) || !pack.length || !Array.isArray(pack[0].files)) {
+            console.error('npm pack did not return the expected packaged file metadata.');
+            process.exit(1);
+          }
+
+          const files = pack[0].files.map((file) => file.path);
+          const requiredFiles = [
+            'bin/universal-skills.js',
+            'scripts/install.sh',
+            'README.md',
+            'LICENSE'
+          ];
+          const requiredPrefixes = [
+            'skills/',
+            'plugins/',
+            'templates/'
+          ];
+
+          const missingFiles = requiredFiles.filter((file) => !files.includes(file));
+          const missingPrefixes = requiredPrefixes.filter((prefix) => !files.some((file) => file.startsWith(prefix)));
+
+          if (missingFiles.length || missingPrefixes.length) {
+            console.error('Packaged artifact is missing required runtime assets.');
+            if (missingFiles.length) {
+              console.error(`Missing files: ${missingFiles.join(', ')}`);
+            }
+            if (missingPrefixes.length) {
+              console.error(`Missing packaged directories: ${missingPrefixes.join(', ')}`);
+            }
+            process.exit(1);
+          }
+
+          console.log(`Verified ${pack[0].filename} with ${files.length} packaged files.`);
+          NODE
