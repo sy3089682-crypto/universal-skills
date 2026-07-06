@@ -1,0 +1,39 @@
+name: Verify package artifact
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'bin/**'
+      - 'skills/**'
+      - 'plugins/**'
+      - 'scripts/**'
+      - 'templates/**'
+      - '.github/workflows/verify-package-artifact.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'bin/**'
+      - 'skills/**'
+      - 'plugins/**'
+      - 'scripts/**'
+      - 'templates/**'
+      - '.github/workflows/verify-package-artifact.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-package-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify npm package artifact contents
+        run: node scripts/verify-package-artifact.js
